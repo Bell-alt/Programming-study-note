@@ -1,7 +1,7 @@
 # Programming-study-note
-Spring
+# Spring
 # 의존성주입(DI = Dependency Injection)
-A가 B를 필요로 하는 상황에서 A가 B를 만들지 않고 외부에서 주입받는 것을 의미함
+  A가 B를 필요로 하는 상황에서 A가 B를 만들지 않고 외부에서 주입받는 것을 의미함
 이유 : 
 class A {
     private B b = new B();  // 직접 만들면
@@ -19,7 +19,7 @@ class A {
 ->A는 B가 있어야 한다만 알고 누가 B를 제공할지는 모름
 -> Spring 컨테이너가 B 객체를 만들어서 A에 넣어줌
 
-DI 방식
+# DI 방식
 1.생성자주입(Constructor Injection)
 class A {
     private B b;
@@ -75,6 +75,53 @@ Spring XML
 
 정리
 *의존한다 = A가 혼자서는 못쓰고 B객체가 있어야 정상적으로 작동
+*DI(의존성 주입) = Spring 컨테이너가 대신 A와 B를 연결해준다
+
+
+# 의존성주입(DI)를 사용하는 이유
+
+# 그냥 A안에서 B를 직접 만들면 생기는 문제
+class A {
+    private B b = new B();   // A가 B를 직접 만듦
+
+    public void work() {
+        b.doSomething();
+    }
+}
+: 간단한 예제에서는 문제없어 보이지만 현실에서는 B가 변경될 때 마다 A를 계속 수정해줘야함
+예) B대신 C를 써야한다면
+class A {
+    private C c = new C();   // 코드 바꿔야 함
+} -> 의존관계가 코드에 딱 묶여버려서 확장성,유지보수성이 떨어짐
+
+But 의존성주입(DI)을 쓴다면?
+class A {
+    private InterfaceX x;   // B든 C든 어떤 구현체든 받을 수 있음
+
+    public A(InterfaceX x) {
+        this.x = x;
+    }
+
+    public void work() {
+        x.doSomething();
+    }
+}
+Spring 설정
+<bean id="b" class="B"/>
+<bean id="a" class="A">
+    <constructor-arg ref="b"/> <!-- b를 A에 넣어줌 -->
+</bean>
+-> A는 누가오든(B도 C도 괜찮음) InterfaceX만 존재하면 되는 구조
+-> B를 C로 바꿀때 코드 수정없이 XML만 고치면 됨
+
+정리
+굳이 DI를 쓰는 이유
+* 코드안에서 직접 객체를 만들면 변경이 힘들고 (A랑 B가 딱 묶여버림)
+* DI를 쓰면 ->  객체 교체,확장, 테스트가 훨씬 쉬워짐
+* 유연한 설계 변경에 강한 코드를 만들려고 굳이 의존성을 밖에서 주입받게 하는것임 
+
+
+
 
 
 
